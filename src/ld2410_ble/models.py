@@ -21,3 +21,16 @@ class LD2410BLEState:
     static_energy_gates: list[int] | None = field(
         default_factory=lambda: [0, 0, 0, 0, 0, 0, 0, 0, 0]
     )
+
+@dataclass(frozen=True)
+class LD2410BLEConfig:
+    max_distance_gates: int | None = 8
+    max_motion_gates: int | None = 8
+    max_static_gates: int | None = 8
+    motion_energy_gates: list[int] | None = field(
+        default_factory=lambda: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    )
+    static_energy_gates: list[int] | None = field(
+        default_factory=lambda: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    )
+    unmanned_timeout: int  = 0

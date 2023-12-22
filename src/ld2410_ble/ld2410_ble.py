@@ -28,13 +28,25 @@ from .const import (
     CMD_DISABLE_CONFIG,
     CMD_ENABLE_CONFIG,
     CMD_ENABLE_ENGINEERING_MODE,
+    CMD_READ_CONFIG,
+    CMD_SET_RANGE_SENSITIVITY_PRE,
+    CMD_SET_RANGE_SENSITIVITY_POST,
+    CMD_SET_MAX_GATE_AND_UNMANNED_TIMEOUT_PRE,
+    CMD_SET_MAX_GATE_AND_UNMANNED_TIMEOUT_POST,
     MOVING_TARGET,
     STATIC_TARGET,
+    PARAM_GATE,
+    PARAM_MOTION_SENSITIVITY,
+    PARAM_STATIC_SENSITIVITY,
+    PARAM_MAX_MOVING_DIST_GATE,
+    PARAM_MAX_STATIC_DIST_GATE,
+    PARAM_UNMANNED_TIMEOUT,
     engineering_frame_regex,
     frame_regex,
+    read_param_frame_regex
 )
 from .exceptions import CharacteristicMissingError
-from .models import LD2410BLEState
+from .models import LD2410BLEState, LD2410BLEConfig
 
 BLEAK_BACKOFF_TIME = 0.25
 
@@ -63,6 +75,7 @@ class LD2410BLE:
         self._password = password
         self._operation_lock = asyncio.Lock()
         self._state = LD2410BLEState()
+        self._config = LD2410BLEConfig()
         self._connect_lock: asyncio.Lock = asyncio.Lock()
         self._client: BleakClientWithServiceCache | None = None
         self._expected_disconnect = False
@@ -99,6 +112,11 @@ class LD2410BLE:
         if self._advertisement_data:
             return self._advertisement_data.rssi
         return None
+
+    @property
+    def config(self) -> LD2410BLEConfig:
+        """Return the config."""
+        return self._config
 
     @property
     def state(self) -> LD2410BLEState:
@@ -243,6 +261,126 @@ class LD2410BLE:
         assert self._state.static_energy_gates is not None  # nosec
         return self._state.static_energy_gates[8]
 
+    @property
+    def config_max_distance_gates(self) -> int:
+        assert self._config.max_distance_gates is not None  # nosec
+        return self._config.max_distance_gates
+
+    @property
+    def config_max_motion_gates(self) -> int:
+        assert self._config.max_motion_gates is not None  # nosec
+        return self._config.max_motion_gates
+
+    @property
+    def config_max_static_gates(self) -> int:
+        assert self._config.max_static_gates is not None  # nosec
+        return self._config.max_static_gates
+
+    @property
+    def config_motion_energy_gates(self) -> list[int]:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates
+
+    @property
+    def config_motion_energy_gate_0(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[0]
+
+    @property
+    def config_motion_energy_gate_1(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[1]
+
+    @property
+    def config_motion_energy_gate_2(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[2]
+
+    @property
+    def config_motion_energy_gate_3(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[3]
+
+    @property
+    def config_motion_energy_gate_4(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[4]
+
+    @property
+    def config_motion_energy_gate_5(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[5]
+
+    @property
+    def config_motion_energy_gate_6(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[6]
+
+    @property
+    def config_motion_energy_gate_7(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[7]
+
+    @property
+    def config_motion_energy_gate_8(self) -> int:
+        assert self._config.motion_energy_gates is not None  # nosec
+        return self._config.motion_energy_gates[8]
+
+    @property
+    def config_static_energy_gates(self) -> list[int]:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates
+
+    @property
+    def config_static_energy_gate_0(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[0]
+
+    @property
+    def config_static_energy_gate_1(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[1]
+
+    @property
+    def config_static_energy_gate_2(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[2]
+
+    @property
+    def config_static_energy_gate_3(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[3]
+
+    @property
+    def config_static_energy_gate_4(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[4]
+
+    @property
+    def config_static_energy_gate_5(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[5]
+
+    @property
+    def config_static_energy_gate_6(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[6]
+
+    @property
+    def config_static_energy_gate_7(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[7]
+
+    @property
+    def config_static_energy_gate_8(self) -> int:
+        assert self._config.static_energy_gates is not None  # nosec
+        return self._config.static_energy_gates[8]
+
+    @property
+    def config_unmanned_timeout(self) -> int:
+        assert self._config.unmanned_timeout is not None  # nosec
+        return self._config.unmanned_timeout
+
     async def stop(self) -> None:
         """Stop the LD2410BLE."""
         _LOGGER.debug("%s: Stop", self.name)
@@ -297,6 +435,55 @@ class LD2410BLE:
                 CHARACTERISTIC_NOTIFY, self._notification_handler
             )
 
+        await self.read_config()
+
+    async def read_config(self) -> None:
+        _LOGGER.debug("%s: Reading configuration", self.name)
+        await self._send_command(CMD_ENABLE_CONFIG)
+        await asyncio.sleep(0.1)
+        await self._send_command(CMD_READ_CONFIG)
+        await asyncio.sleep(0.1)
+        await self._send_command(CMD_DISABLE_CONFIG)
+        await asyncio.sleep(0.1)
+
+    async def config_gate_sensitivity(self, gate, moving_sens, static_sens) -> None:
+        _LOGGER.debug("%s: Config gate sensitivity", self.name)
+
+        cmd = CMD_SET_RANGE_SENSITIVITY_PRE
+        cmd += PARAM_GATE
+        cmd += gate.to_bytes(4, 'little')
+        cmd += PARAM_MOTION_SENSITIVITY
+        cmd += moving_sens.to_bytes(4, 'little')
+        cmd += PARAM_STATIC_SENSITIVITY
+        cmd += static_sens.to_bytes(4, 'little')
+        cmd += CMD_SET_RANGE_SENSITIVITY_POST
+
+        await self._send_command(CMD_ENABLE_CONFIG)
+        await asyncio.sleep(0.1)
+        await self._send_command(cmd)
+        await asyncio.sleep(0.1)
+        await self._send_command(CMD_DISABLE_CONFIG)
+        await asyncio.sleep(0.1)
+
+    async def config_max_gate_and_unmanned_timeout(self, max_moving_gate, max_static_gate, unmanned_timeout) -> None:
+        _LOGGER.debug("%s: Config max gate and unmanned timeout", self.name)
+
+        cmd = CMD_SET_MAX_GATE_AND_UNMANNED_TIMEOUT_PRE
+        cmd += PARAM_MAX_MOVING_DIST_GATE
+        cmd += max_moving_gate.to_bytes(4, 'little')
+        cmd += PARAM_MAX_STATIC_DIST_GATE
+        cmd += max_static_gate.to_bytes(4, 'little')
+        cmd += PARAM_UNMANNED_TIMEOUT
+        cmd += unmanned_timeout.to_bytes(4, 'little')
+        cmd += CMD_SET_MAX_GATE_AND_UNMANNED_TIMEOUT_POST
+
+        await self._send_command(CMD_ENABLE_CONFIG)
+        await asyncio.sleep(0.1)
+        await self._send_command(cmd)
+        await asyncio.sleep(0.1)
+        await self._send_command(CMD_DISABLE_CONFIG)
+        await asyncio.sleep(0.1)
+
     async def _ensure_connected(self) -> None:
         """Ensure connection to device is established."""
         if self._connect_lock.locked():
@@ -345,46 +532,66 @@ class LD2410BLE:
         _LOGGER.debug("%s: Notification received: %s", self.name, data.hex())
 
         self._buf += data
-        msg = re.search(frame_regex, self._buf)
+        msg = re.search(read_param_frame_regex, self._buf)
         if msg:
             self._buf = self._buf[msg.end() :]  # noqa: E203
-            target_state = msg.group("target_state")
-            engineering_data = msg.group("engineering_data")
+            config_maximum_distance_gates = self.intify(msg.group("maximum_distance_gates"))
+            config_maximum_motion_gates = self.intify(msg.group("maximum_motion_gates"))
+            config_maximum_static_gates = self.intify(msg.group("maximum_static_gates"))
+            config_unmanned_timeout = self.intify(msg.group("unmanned_timeout"))
+            config_motion_energy_gates = [x for x in msg.group("motion_energy_gates")]
+            config_static_energy_gates = [x for x in msg.group("static_energy_gates")]
 
-            target_state_int = self.intify(target_state)
-            is_moving = bool(target_state_int & MOVING_TARGET)
-            is_static = bool(target_state_int & STATIC_TARGET)
-            moving_target_distance = self.intify(msg.group("moving_target_distance"))
-            moving_target_energy = self.intify(msg.group("moving_target_energy"))
-            static_target_distance = self.intify(msg.group("static_target_distance"))
-            static_target_energy = self.intify(msg.group("static_target_energy"))
-            detection_distance = self.intify(msg.group("detection_distance"))
-
-            max_motion_gates = None
-            max_static_gates = None
-            motion_energy_gates = None
-            static_energy_gates = None
-            if engineering_data:
-                em = re.match(engineering_frame_regex, engineering_data)
-                if em:
-                    max_motion_gates = self.intify(em.group("maximum_motion_gates"))
-                    max_static_gates = self.intify(em.group("maximum_static_gates"))
-                    motion_energy_gates = [x for x in em.group("motion_energy_gates")]
-                    static_energy_gates = [x for x in em.group("static_energy_gates")]
-
-            self._state = LD2410BLEState(
-                is_moving=is_moving,
-                is_static=is_static,
-                moving_target_distance=moving_target_distance,
-                moving_target_energy=moving_target_energy,
-                static_target_distance=static_target_distance,
-                static_target_energy=static_target_energy,
-                detection_distance=detection_distance,
-                max_motion_gates=max_motion_gates,
-                max_static_gates=max_static_gates,
-                motion_energy_gates=motion_energy_gates,
-                static_energy_gates=static_energy_gates,
+            self._config = LD2410BLEConfig(
+                max_distance_gates = config_maximum_distance_gates,
+                max_motion_gates = config_maximum_motion_gates,
+                max_static_gates = config_maximum_static_gates,
+                motion_energy_gates = config_motion_energy_gates,
+                static_energy_gates = config_static_energy_gates,
+                unmanned_timeout = config_unmanned_timeout
             )
+
+        else:
+            msg = re.search(frame_regex, self._buf)
+            if msg:
+                self._buf = self._buf[msg.end() :]  # noqa: E203
+                target_state = msg.group("target_state")
+                engineering_data = msg.group("engineering_data")
+
+                target_state_int = self.intify(target_state)
+                is_moving = bool(target_state_int & MOVING_TARGET)
+                is_static = bool(target_state_int & STATIC_TARGET)
+                moving_target_distance = self.intify(msg.group("moving_target_distance"))
+                moving_target_energy = self.intify(msg.group("moving_target_energy"))
+                static_target_distance = self.intify(msg.group("static_target_distance"))
+                static_target_energy = self.intify(msg.group("static_target_energy"))
+                detection_distance = self.intify(msg.group("detection_distance"))
+
+                max_motion_gates = None
+                max_static_gates = None
+                motion_energy_gates = None
+                static_energy_gates = None
+                if engineering_data:
+                    em = re.match(engineering_frame_regex, engineering_data)
+                    if em:
+                        max_motion_gates = self.intify(em.group("maximum_motion_gates"))
+                        max_static_gates = self.intify(em.group("maximum_static_gates"))
+                        motion_energy_gates = [x for x in em.group("motion_energy_gates")]
+                        static_energy_gates = [x for x in em.group("static_energy_gates")]
+
+                self._state = LD2410BLEState(
+                    is_moving=is_moving,
+                    is_static=is_static,
+                    moving_target_distance=moving_target_distance,
+                    moving_target_energy=moving_target_energy,
+                    static_target_distance=static_target_distance,
+                    static_target_energy=static_target_energy,
+                    detection_distance=detection_distance,
+                    max_motion_gates=max_motion_gates,
+                    max_static_gates=max_static_gates,
+                    motion_energy_gates=motion_energy_gates,
+                    static_energy_gates=static_energy_gates,
+                )
 
             self._fire_callbacks()
 
