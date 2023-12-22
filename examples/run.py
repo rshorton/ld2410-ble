@@ -5,14 +5,15 @@ from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
-from pathlib import Path
-import sys
-path_root = Path(__file__).parents[1]
-print("path: ", path_root)
-sys.path.append(str(path_root))
-print(sys.path)
+#from pathlib import Path
+#import sys
+#path_root = Path(__file__).parents[1]
+#print("path: ", path_root)
+#sys.path.append(str(path_root))
+#print(sys.path)
+#from src.ld2410_ble.ld2410_ble import LD2410BLE, LD2410BLEState
 
-from src.ld2410_ble.ld2410_ble import LD2410BLE, LD2410BLEState
+from ld2410_ble.ld2410_ble import LD2410BLE, LD2410BLEState
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,5 +92,5 @@ async def run() -> None:
 
 
 logging.basicConfig(level=logging.INFO)
-logging.getLogger("ld2410_ble").setLevel(logging.DEBUG)
+logging.getLogger("ld2410_ble").setLevel(logging.INFO)
 asyncio.run(run())
